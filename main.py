@@ -38,16 +38,6 @@ st.markdown(
             font-size: 24px;
         }
 
-        .custom-code {
-            background-color: #f0f0f0; /* light gray background */
-            color: #000000; /* black text */
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            width: 500px;  /* Set custom width */
-            overflow-x: auto;  /* Allow horizontal scroll if the content overflows */
-        }
-
     </style>
     """,
     unsafe_allow_html=True
@@ -95,11 +85,12 @@ if page == "Machine Learning Detail":
     uploaded_file = './champions.csv'
     df = load_data(uploaded_file)
     
-    st.header("Raw Dataset Preview", divider="green")
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Raw Dataset", divider="green")
     st.dataframe(df, height=300 ,column_config={'Blurb': {'width': 100}})
 
     st.header("Exploratory Data Analysis (EDA)", divider="green")
-    
+    st.subheader("Feature Selection")
     row1col1, row1col2 = st.columns([0.4, 0.6])
     with row1col1:
         st.code("df.nunique() 'the number of unique values' ")
@@ -115,6 +106,85 @@ if page == "Machine Learning Detail":
 
     st.markdown('<br>', unsafe_allow_html=True)
 
+    df.drop(columns=['ID','Name', 'Title', 'Blurb', 'Crit', 'Crit_per_Level'], inplace=True)
+
+    st.subheader("Data Transformation")
+    row2col1, row2col2, row2col3 = st.columns([0.3, 0.2, 0.5])
+    with row2col1:
+        st.code(" df.isnull().any() 'checks null values' ")
+        st.dataframe(df.isnull().any(), width=550, height=275,column_config={'_index': {'width': 200}})
+
+    ms = df.shape
+    with row2col2:
+        st.code(f" df['Partype'].unique() ")
+        st.dataframe(df['Partype'].unique(), width=550, height=275)
+    
+    with row2col3:
+        st.code(" df['Partype'] = df['Partype'].fillna('Other') ")
+        st.write("&emsp;&emsp;Since `Partype` is categorical features, `None` can be replaced with a placeholder (e.g., `Unknown` or `Other`) to ensure no loss of information.")
+        st.markdown('<br>', unsafe_allow_html=True)
+        st.code(" df['Partype'] = df['Partype'].apply(lambda x: x if x in ['Mana', 'Energy'] else 'Special') ")
+        st.write("&emsp;&emsp;In League of Legends (LoL), `Partype` refers to the type of resource a champion uses to cast abilities. There are three main types Mana , Energy and No Cost. Champions with No Cost abilities has special `Partype` (Fury, Rage, Heat, etc.) , so they can be classified under a Special category.")
+    
+    df['Partype'] = df['Partype'].fillna('Other')
+    df['Partype'] = df['Partype'].apply(lambda x: x if x in ['Mana', 'Energy'] else 'Special')
+
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    st.subheader("Data Formatting")
+    row3col1, row3col2 = st.columns([0.5, 0.5])
+    with row3col1:
+        st.code(" df['Partype'] = df['Partype'].map({'Mana':2,'Energy':1,'Special':0}) ")
+        col1, col2, col3 = st.columns([0.2, 0.1, 0.2])
+    
+        with col1:
+            st.dataframe(df[['Partype']] , width=300, height=200)
+
+        df['Partype'] = df['Partype'].map({'Mana':2,'Energy':1,'Special':0})
+
+        with col2:
+            st.markdown('<br><br>', unsafe_allow_html=True)
+            st.header("&emsp;->")
+
+        with col3:
+            st.dataframe(df[['Partype']] , width=300, height=200)
+
+    with row3col2:
+        st.code(" df['Tags'] = df['Tags'].map({'Fighter':5,'Mage':4,'Assassin':3,'Marksman':2,'Tank':1,'Support':0}) ")
+        col4, col5, col6 = st.columns([0.2, 0.1, 0.2])
+        
+        with col4:
+            st.dataframe(df['Tags'], width=300, height=200)
+
+        with col5:
+            st.markdown('<br><br>', unsafe_allow_html=True)
+            st.header("&emsp;->")
+
+        df['Tags'] = df['Tags'].map({'Fighter':5,'Mage':4,'Assassin':3,'Marksman':2,'Tank':1,'Support':0})
+
+        with col6:
+            st.dataframe(df['Tags'], width=300, height=200)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    st.subheader("Data Scaling with MinMaxScaler()")
+    row4col1, row4col2 = st.columns([0.6, 0.4])
+    with row4col1:
+        st.code("# Select MinMaxScaler() for scaling\nscaler = MinMaxScaler()\n# Exclude the 'Tags' column which is used as a label\ndf_scaled = df.drop(['Tags'], axis=1)\n# Apply MinMaxScaler()\ndf_scaled = pd.DataFrame(scaler.fit_transform(df_scaled), columns=df_scaled.columns)\n# Reattach the 'Tags' column\ndf_scaled['Tags'] = df['Tags'] ")
+
+    with row4col2:
+        st.write("&emsp;&emsp;In this process, `MinMaxScaler()` is used to scale the numerical features of the dataframe. The `MinMaxScaler()` scales the data to a range between 0 and 1.")
+        st.write("&emsp;&emsp;The `Tags` column is label column that represents classes or categories. Scaling categorical variables would distort their meaning. So, we drop the `Tags` column before scaling, then reattach it later to ensure that the labels are preserved while the other features are normalized.")
+    
+    scaler = MinMaxScaler()
+    df_scaled = df.drop(['Tags'], axis=1)
+    df_scaled = pd.DataFrame(scaler.fit_transform(df_scaled), columns=df_scaled.columns)
+    df_scaled['Tags'] = df['Tags']
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Dataset after EDA", divider="green")
+    st.dataframe(df_scaled, height=300 )
+    
     #X = df.drop(columns=['Tags','Name'])
     #y = df['Tags']
     #scaler = MinMaxScaler()
