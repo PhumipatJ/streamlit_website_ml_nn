@@ -21,7 +21,7 @@ st.markdown(
         .block-container {
             padding-left: 5rem;
             padding-right: 5rem;
-            max-width: 100% !important;
+            max-width: 90% !important;
         }
 
         .h1 {
@@ -31,7 +31,21 @@ st.markdown(
         }
 
         .h2 {
+            font-size: 36px;
+        }
+
+        .h3 {
             font-size: 24px;
+        }
+
+        .custom-code {
+            background-color: #f0f0f0; /* light gray background */
+            color: #000000; /* black text */
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 500px;  /* Set custom width */
+            overflow-x: auto;  /* Allow horizontal scroll if the content overflows */
         }
 
     </style>
@@ -77,12 +91,29 @@ if page == "Machine Learning Detail":
         st.write(f"{model_name} - Recall: {recall:.2f}")
         st.write(f"{model_name} - F1-Score: {f1:.2f}")
 
-    st.markdown('<div class="h1">League of Legends Champions Tags Classifier with KNN and SVM</div>', unsafe_allow_html=True)
+    st.markdown('<div class="h1">League of Legends Champions Tags Classifier</div>', unsafe_allow_html=True)
     uploaded_file = './champions.csv'
     df = load_data(uploaded_file)
     
-    st.markdown('<div class="h2">Original Dataset Preview</div>', unsafe_allow_html=True)
-    st.dataframe(df.head())
+    st.header("Raw Dataset Preview", divider="green")
+    st.dataframe(df, height=300 ,column_config={'Blurb': {'width': 100}})
+
+    st.header("Exploratory Data Analysis (EDA)", divider="green")
+    
+    row1col1, row1col2 = st.columns([0.4, 0.6])
+    with row1col1:
+        st.code("df.nunique() 'the number of unique values' ")
+        st.dataframe(df.nunique(), width=550, height=275,column_config={'_index': {'width': 240}})
+
+    ms = df.shape
+    with row1col2:
+        st.code(f"df.shape : {ms} -> {ms[0]} row {ms[1]} column 'the number of rows and columns in df'")
+        st.write("&emsp;&emsp;`ID` , `Name` , `Title` and `Blurb` contain descriptive text or metadata which does not provide meaningful information for model training and is considered redundant for the analysis since it doesn't add predictive value.")
+        st.write("&emsp;&emsp;`Crit` and `Crit_per_Level` are likely constant or have a limited set of values, it may not offer enough variation or significant predictive power compared to other variables like `Attack` , `Defense` , or `HP`.")
+        st.code(f"df.drop(columns=['ID', 'Title', 'Name', 'Blurb', 'Crit', 'Crit_per_Level'])")
+        st.write("&emsp;&emsp;By dropping these columns, we reduce noise and ensure that the data contains only relevant and meaningful features for further analysis, which is crucial for building effective machine learning models.")
+
+    st.markdown('<br>', unsafe_allow_html=True)
 
     #X = df.drop(columns=['Tags','Name'])
     #y = df['Tags']
