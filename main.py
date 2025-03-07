@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import VotingClassifier
 import os
 import seaborn as sns
+import random
 
 st.markdown(
     """
@@ -50,15 +51,7 @@ if page == "Machine Learning Detail":
         df = pd.read_csv(file)
         return df
 
-    def load_data2(file):
-        df = pd.read_csv(file)
-        df.drop(columns=['ID', 'Title', 'Blurb', 'Crit', 'Crit_per_Level'], inplace=True)
-        df['Partype'] = df['Partype'].apply(lambda x: x if x in ['Mana', 'Energy'] else 'None')
-        df['Partype'] = df['Partype'].map({'Mana':2,'Energy':1,'None':0})
-        df['Tags'] = df['Tags'].map({'Fighter':5,'Mage':4,'Assassin':3,'Marksman':2,'Tank':1,'Support':0})
-        return df
-
-    def print_model_metrics(model, X_train, y_train, model_name="Model"):
+    def model_evaluate(model, X_train, y_train, model_name="Model"):
         model.fit(X_train, y_train)
         y_pred = model.predict(X_train)
         
@@ -68,18 +61,7 @@ if page == "Machine Learning Detail":
         f1 = f1_score(y_train, y_pred, average='weighted')
         conf_matrix = confusion_matrix(y_train, y_pred)
         
-        # Display confusion matrix as a heatmap
-        st.write(f"{model_name} - Confusion Matrix:")
-        fig, ax = plt.subplots(figsize=(6, 5))
-        sns.heatmap(conf_matrix, annot=True, fmt="d", cmap='Blues', cbar=False, ax=ax, annot_kws={"size": 12})
-        ax.set_xlabel('Predicted Labels')
-        ax.set_ylabel('True Labels')
-        st.pyplot(fig)
-        
-        st.write(f"{model_name} - Accuracy: {accuracy:.2f}")
-        st.write(f"{model_name} - Precision: {precision:.2f}")
-        st.write(f"{model_name} - Recall: {recall:.2f}")
-        st.write(f"{model_name} - F1-Score: {f1:.2f}")
+        return conf_matrix, accuracy, precision, recall, f1
 
     st.markdown('<div class="h1">League of Legends Champions Tags Classifier</div>', unsafe_allow_html=True)
     uploaded_file = './champions.csv'
@@ -106,7 +88,7 @@ if page == "Machine Learning Detail":
 
     st.markdown('<br>', unsafe_allow_html=True)
 
-    df.drop(columns=['ID','Name', 'Title', 'Blurb', 'Crit', 'Crit_per_Level'], inplace=True)
+    df.drop(columns=['ID', 'Title', 'Blurb', 'Crit', 'Crit_per_Level'], inplace=True)
 
     st.subheader("Data Transformation")
     row2col1, row2col2, row2col3 = st.columns([0.3, 0.2, 0.5])
@@ -167,7 +149,7 @@ if page == "Machine Learning Detail":
     
     st.markdown('<br>', unsafe_allow_html=True)
 
-    st.subheader("Data Scaling with MinMaxScaler()")
+    st.subheader("Data Scaling")
     row4col1, row4col2 = st.columns([0.6, 0.4])
     with row4col1:
         st.code("# Select MinMaxScaler() for scaling\nscaler = MinMaxScaler()\n# Exclude the 'Tags' column which is used as a label\ndf_scaled = df.drop(['Tags'], axis=1)\n# Apply MinMaxScaler()\ndf_scaled = pd.DataFrame(scaler.fit_transform(df_scaled), columns=df_scaled.columns)\n# Reattach the 'Tags' column\ndf_scaled['Tags'] = df['Tags'] ")
@@ -177,24 +159,149 @@ if page == "Machine Learning Detail":
         st.write("&emsp;&emsp;The `Tags` column is label column that represents classes or categories. Scaling categorical variables would distort their meaning. So, we drop the `Tags` column before scaling, then reattach it later to ensure that the labels are preserved while the other features are normalized.")
     
     scaler = MinMaxScaler()
-    df_scaled = df.drop(['Tags'], axis=1)
+    df_scaled = df.drop(['Tags','Name'], axis=1)
     df_scaled = pd.DataFrame(scaler.fit_transform(df_scaled), columns=df_scaled.columns)
     df_scaled['Tags'] = df['Tags']
+    df_scaled['Name'] = df['Name']
 
     st.markdown('<br>', unsafe_allow_html=True)
     st.header("Dataset after EDA", divider="green")
-    st.dataframe(df_scaled, height=300 )
+    st.dataframe(df_scaled.drop(columns=['Name']), height=300)
     
-    #X = df.drop(columns=['Tags','Name'])
-    #y = df['Tags']
-    #scaler = MinMaxScaler()
-    #X_scaled = scaler.fit_transform(X)
-    #X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
-        
-    #knn = KNeighborsClassifier(n_neighbors=5)
-    #svm = SVC(probability=True)
-    #ensemble_model = VotingClassifier(estimators=[('knn', knn), ('svm', svm)], voting='soft')
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Model Preparation", divider="green")
 
-    #print(f"Training Data Metrics Ensemble:\n")
-    #print_model_metrics(ensemble_model, X_train, y_train, model_name="Ensemble")
+    row5col1, row5col2 = st.columns([0.5, 0.5])
+    with row5col1:
+        st.subheader("1. Feature and Target Selection")
+        st.code("X = df_scaled.drop(['Name', 'Tags'], axis=1)  # Features (X)\ny = df_scaled['Tags']  # Target labels (y)")
+        st.markdown("- Selecting features (X) and target (y) for model training.")
+        st.markdown('<br>', unsafe_allow_html=True)
+        st.subheader("3. Model Initialization")
+        st.code("knn = KNeighborsClassifier(n_neighbors=5)\nsvm = SVC(kernel='linear', C=1, probability=True, random_state=42)")
+        st.markdown("- Initializing models KNeighborsClassifier (KNN) and SVC (Support Vector Machine)")
+
+    with row5col2:
+        st.subheader("2. Data Splitting")
+        st.code("X_train, X_test, y_train, y_test = \ntrain_test_split(X, y, test_size=0.2, random_state=42)")
+        st.markdown("- Randomly splitting the dataset into training (80%) and testing (20%) sets.")
+        st.markdown('<br>', unsafe_allow_html=True)
+        st.subheader("4. Ensemble Model Initialization")
+        st.code("ensemble_model = \nVotingClassifier(estimators=[('knn', knn), ('svm', svm)], voting='hard')")
+        st.markdown("- Creating an ensemble model, which combines KNN and SVM for better predictions.")
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Model Evaluation", divider="green")
+    st.code("""
+    def model_evaluate(model, X_data, y_data, model_name="Model"):
+        model.fit(X_data, y_data)  # Train the model using the training data
+        y_pred = model.predict(X_data)  # Predict the labels for the training data
+
+        accuracy = accuracy_score(y_data, y_pred)  # Calculate the accuracy (overall correct predictions)
+        precision = precision_score(y_data, y_pred, average='weighted')  # Calculate precision (correct positives out of predicted positives)
+        recall = recall_score(y_data, y_pred, average='weighted')  # Calculate recall (correct positives out of actual positives)
+        f1 = f1_score(y_data, y_pred, average='weighted')  # Calculate F1 score (harmonic mean of precision and recall)
+        conf_matrix = confusion_matrix(y_data, y_pred)  # Calculate confusion matrix to show true vs predicted labels
+    """)
+
+    X = df_scaled.drop(['Name', 'Tags'], axis=1) 
+    y = df_scaled['Tags']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    knn = KNeighborsClassifier(n_neighbors=5)
+    svm = SVC(kernel='linear', C=1,probability=True, random_state=42)  
+    ensemble_model = VotingClassifier(estimators=[('knn', knn), ('svm', svm)], voting='hard')
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    row6col1, row6col2 = st.columns([0.5, 0.5])
+    with row6col1:
+        st.subheader("Training Data Metrics - KNN")
+        conf_matrix, accuracy, precision, recall, f1 = model_evaluate(knn, X_train, y_train, model_name="KNN")
+        st.code(f"""model_evaluate(knn, X_train, y_train, model_name="KNN")\n\nConfusion Matrix:\n{conf_matrix}\nAccuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nF1-Score: {f1}""")
         
+        st.markdown('<br>', unsafe_allow_html=True)
+
+        st.subheader("Training Data Metrics - SVM")
+        conf_matrix, accuracy, precision, recall, f1 = model_evaluate(svm, X_train, y_train, model_name="SVM")
+        st.code(f"""model_evaluate(svm, X_train, y_train, model_name="SVM")\n\nConfusion Matrix:\n{conf_matrix}\nAccuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nF1-Score: {f1}""")
+
+        st.markdown('<br>', unsafe_allow_html=True)
+
+        st.subheader("Training Data Metrics - Ensemble (KNN + SVM)")
+        conf_matrix, accuracy, precision, recall, f1 = model_evaluate(ensemble_model, X_train, y_train, model_name="Ensemble")
+        st.code(f"""model_evaluate(ensemble_model, X_train, y_train, model_name="Ensemble")\n\nConfusion Matrix:\n{conf_matrix}\nAccuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nF1-Score: {f1}""")
+
+    with row6col2:
+        st.subheader("Testing Data Metrics - KNN")
+        conf_matrix, accuracy, precision, recall, f1 = model_evaluate(knn, X_test, y_test, model_name="KNN")
+        st.code(f"""model_evaluate(knn, X_test, y_test, model_name="KNN")\n\nConfusion Matrix:\n{conf_matrix}\nAccuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nF1-Score: {f1}""")
+
+        st.markdown('<br>', unsafe_allow_html=True)
+
+        st.subheader("Testing Data Metrics - SVM")
+        conf_matrix, accuracy, precision, recall, f1 = model_evaluate(svm, X_test, y_test, model_name="SVM")
+        st.code(f"""model_evaluate(svm, X_test, y_test, model_name="SVM")\n\nConfusion Matrix:\n{conf_matrix}\nAccuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nF1-Score: {f1}""")
+
+        st.markdown('<br>', unsafe_allow_html=True)
+
+        st.subheader("Testing Data Metrics - Ensemble (KNN + SVM)")
+        conf_matrix, accuracy, precision, recall, f1 = model_evaluate(ensemble_model, X_test, y_test, model_name="Ensemble")
+        st.code(f"""model_evaluate(ensemble_model, X_test, y_test, model_name="Ensemble")\n\nConfusion Matrix:\n{conf_matrix}\nAccuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nF1-Score: {f1}""")
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Let's Try!", divider="green")
+
+    row7col1, row7col2 = st.columns([0.5, 0.5])
+    with row7col1:
+        with st.form(key='model_selection_form'):
+            model_option = st.selectbox('Choose a model:', ['KNN', 'SVM', 'Ensemble'])
+            dataset_option = st.selectbox('Choose a dataset:', ['Train', 'Test'])
+            submit_button = st.form_submit_button(label='Random Champions')
+
+        if submit_button:
+            if dataset_option == 'Train':
+                X_data = X_train
+                y_data = y_train
+            else:
+                X_data = X_test
+                y_data = y_test
+
+            random_index = random.choice(X_data.index)
+
+            sample_features = X_data.loc[random_index]
+            name = df.loc[random_index, 'Name']
+
+            true_label = y_data.loc[random_index]
+
+            if model_option == 'KNN':
+                predicted_label = knn.predict(sample_features.to_frame().T)
+            elif model_option == 'SVM':
+                predicted_label = svm.predict(sample_features.to_frame().T)
+            else:
+                predicted_label = ensemble_model.predict(sample_features.to_frame().T)
+    
+    with row7col2:
+        category_map = {
+            'Fighter': 5,
+            'Mage': 4,
+            'Assassin': 3,
+            'Marksman': 2,
+            'Tank': 1,
+            'Support': 0
+        }
+
+        category_map = ['Support','Tank','Marksman','Assassin','Mage','Fighter']
+        st.write(f"Sample Name: {name}")
+        st.write(f"True Label: {category_map[true_label]}")
+        st.write(f"Predicted Label: {category_map[predicted_label[0]]}")
+
+    #results = []
+    #true_label = y_test[0]
+    #true_label_name = list(category_map.keys())[list(category_map.values()).index(true_label)]
+    #sample_features = X_test[0]  
+    #sample_name = df.loc[X_test[0], 'Name']
+    #predicted_label = ensemble_model.predict(sample_features)
+    #predicted_label_name = list(category_map.keys())[list(category_map.values()).index(predicted_label[0])]
+    #correct_prediction = (true_label == predicted_label[0])
+    #results.append([sample_name, true_label_name, predicted_label_name, correct_prediction])
+    #results_df = pd.DataFrame(results, columns=['Name', 'True Label', 'Predicted Label', 'Correct Prediction'])
+    #st.write(results_df)
