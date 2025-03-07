@@ -253,8 +253,8 @@ if page == "Machine Learning Detail":
     row7col1, row7col2 = st.columns([0.3, 0.7])
     with row7col1:
         with st.form(key='model_selection_form'):
-            model_option = st.selectbox('Choose a model:', ['KNN', 'SVM', 'Ensemble'])
-            dataset_option = st.selectbox('Choose a dataset:', ['Train', 'Test'])
+            model_option = st.selectbox('Choose a model', ['KNN', 'SVM', 'Ensemble'])
+            dataset_option = st.selectbox('Choose a dataset', ['Train', 'Test'])
             submit_button = st.form_submit_button(label='Random Champions')
 
         if submit_button:
@@ -266,11 +266,7 @@ if page == "Machine Learning Detail":
                 y_data = y_test
 
             random_index = random.choice(X_data.index)
-
             sample_features = X_data.loc[random_index]
-            name = df.loc[random_index, 'Name']
-
-            true_label = y_data.loc[random_index]
 
             if model_option == 'KNN':
                 predicted_label = knn.predict(sample_features.to_frame().T)
@@ -281,7 +277,8 @@ if page == "Machine Learning Detail":
 
     with row7col2:
         col1, col2, col3 = st.columns([0.3, 0.2, 0.2])
-
+        name = df.loc[random_index, 'Name']
+        true_label = y_data.loc[random_index]
         category_map = ['Support', 'Tank', 'Marksman', 'Assassin', 'Mage', 'Fighter']
         image_folder = 'assets/LoL'
         sample_image_path = os.path.join(image_folder, 'champion', f"{name}_0.jpg")
@@ -289,24 +286,10 @@ if page == "Machine Learning Detail":
         predicted_label_image_path = os.path.join(image_folder, 'role', f"{category_map[predicted_label[0]]}.png")
 
         with col1:
-            st.image(sample_image_path, caption=f"Sample: {name}", width=300)
+            st.image(sample_image_path, caption=f"Sample : {name}", width=300)
 
         with col2:
-            st.image(true_label_image_path, caption=f"True Label: {category_map[true_label]}", width=192)
+            st.image(true_label_image_path, caption=f"True Label : {category_map[true_label]}", width=192)
 
         with col3:
-            st.image(predicted_label_image_path, caption=f"Predicted Label: {category_map[predicted_label[0]]}", width=192)
-
-
-
-    #results = []
-    #true_label = y_test[0]
-    #true_label_name = list(category_map.keys())[list(category_map.values()).index(true_label)]
-    #sample_features = X_test[0]  
-    #sample_name = df.loc[X_test[0], 'Name']
-    #predicted_label = ensemble_model.predict(sample_features)
-    #predicted_label_name = list(category_map.keys())[list(category_map.values()).index(predicted_label[0])]
-    #correct_prediction = (true_label == predicted_label[0])
-    #results.append([sample_name, true_label_name, predicted_label_name, correct_prediction])
-    #results_df = pd.DataFrame(results, columns=['Name', 'True Label', 'Predicted Label', 'Correct Prediction'])
-    #st.write(results_df)
+            st.image(predicted_label_image_path, caption=f"Predicted Label : {category_map[predicted_label[0]]}", width=192)
