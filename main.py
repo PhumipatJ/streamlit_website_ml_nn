@@ -250,7 +250,7 @@ if page == "Machine Learning Detail":
     st.markdown('<br>', unsafe_allow_html=True)
     st.header("Let's Try!", divider="green")
 
-    row7col1, row7col2 = st.columns([0.5, 0.5])
+    row7col1, row7col2 = st.columns([0.3, 0.7])
     with row7col1:
         with st.form(key='model_selection_form'):
             model_option = st.selectbox('Choose a model:', ['KNN', 'SVM', 'Ensemble'])
@@ -278,21 +278,26 @@ if page == "Machine Learning Detail":
                 predicted_label = svm.predict(sample_features.to_frame().T)
             else:
                 predicted_label = ensemble_model.predict(sample_features.to_frame().T)
-    
-    with row7col2:
-        category_map = {
-            'Fighter': 5,
-            'Mage': 4,
-            'Assassin': 3,
-            'Marksman': 2,
-            'Tank': 1,
-            'Support': 0
-        }
 
-        category_map = ['Support','Tank','Marksman','Assassin','Mage','Fighter']
-        st.write(f"Sample Name: {name}")
-        st.write(f"True Label: {category_map[true_label]}")
-        st.write(f"Predicted Label: {category_map[predicted_label[0]]}")
+    with row7col2:
+        col1, col2, col3 = st.columns([0.3, 0.2, 0.2])
+
+        category_map = ['Support', 'Tank', 'Marksman', 'Assassin', 'Mage', 'Fighter']
+        image_folder = 'assets/LoL'
+        sample_image_path = os.path.join(image_folder, 'champion', f"{name}_0.jpg")
+        true_label_image_path = os.path.join(image_folder, 'role', f"{category_map[true_label]}.png")
+        predicted_label_image_path = os.path.join(image_folder, 'role', f"{category_map[predicted_label[0]]}.png")
+
+        with col1:
+            st.image(sample_image_path, caption=f"Sample: {name}", width=300)
+
+        with col2:
+            st.image(true_label_image_path, caption=f"True Label: {category_map[true_label]}", width=192)
+
+        with col3:
+            st.image(predicted_label_image_path, caption=f"Predicted Label: {category_map[predicted_label[0]]}", width=192)
+
+
 
     #results = []
     #true_label = y_test[0]
