@@ -47,6 +47,9 @@ st.markdown(
 page = st.sidebar.selectbox("Select a Page", ["Machine Learning Detail", "Machine Learning Demo", "Neural Network Detail", "Neural Network Demo"])
 
 if page == "Machine Learning Detail":
+    st.markdown('<div class="h1">Test</div>', unsafe_allow_html=True)
+
+elif page == "Machine Learning Demo":
     def load_data(file):
         df = pd.read_csv(file)
         return df
@@ -293,3 +296,4 @@ if page == "Machine Learning Detail":
 
         with col3:
             st.image(predicted_label_image_path, caption=f"Predicted Label : {category_map[predicted_label[0]]}", width=192)
+
