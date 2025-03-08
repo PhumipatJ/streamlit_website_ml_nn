@@ -386,6 +386,12 @@ elif page == "Machine Learning Demo":
 
     st.markdown('<div class="h1">League of Legends Champions Role Classifier</div>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
+    
+    st.header("Guess the Role of a Random Champion !", divider="green")
+    row7col1, row7col2 = st.columns([0.3, 0.7])
+    sample_image_path = ""
+    true_label_image_path = ""
+    predicted_label_image_path = ""
 
     row7col1, row7col2 = st.columns([0.3, 0.7])
     sample_image_path = ""
@@ -418,25 +424,132 @@ elif page == "Machine Learning Demo":
         else:
             predicted_label = ensemble_model.predict(sample_features.to_frame().T)
             
-        category_map = ['Support', 'Tank', 'Marksman', 'Assassin', 'Mage', 'Fighter']
+        category_map = ['Support', 'Tank', 'Marksman', 'Assasin', 'Mage', 'Fighter']
         image_folder = 'assets/LoL'
         sample_image_path = os.path.join(image_folder, 'champion', f"{name}_0.jpg")
         true_label_image_path = os.path.join(image_folder, 'role', f"{category_map[true_label]}.png")
         predicted_label_image_path = os.path.join(image_folder, 'role', f"{category_map[predicted_label[0]]}.png")
 
     with row7col2:
-        col1, col2, col3 = st.columns([0.3, 0.2, 0.2])
-
         try:
-            with col1:
-                st.image(sample_image_path, caption=f"Sample : {name}", width=300)
-
-            with col2:
-                st.image(true_label_image_path, caption=f"True Label : {category_map[true_label]}", width=192)
-
-            with col3:
-                st.image(predicted_label_image_path, caption=f"Predicted Label : {category_map[predicted_label[0]]}", width=192)
-
+            st.dataframe(sample_features, height=250,column_config={'_index': {'width': 300}})
         except Exception as e:
             print(e)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4, col5, col6, col7 = st.columns([0.05, 0.3, 0.05, 0.05 ,0.25, 0.05, 0.25])
+    try:
+        with col2:
+            st.image(sample_image_path, caption=f"Sample : {name}", width=300)
+
+        with col5:
+            st.write(" ")
+            st.write(" ")
+            st.image(true_label_image_path, caption=f"True Label : {category_map[true_label]}", width=192)
+
+        with col7:
+            st.write(" ")
+            st.write(" ")
+            st.image(predicted_label_image_path, caption=f"Predicted Label : {category_map[predicted_label[0]]}", width=192)
+
+    except Exception as e:
+        print(e)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Game Just Released a New Champion! Guess Their Role!", divider="green")
+
+    def getMin(column_name):
+        return df[column_name].min()
+
+    def getMax(column_name):
+        return df[column_name].max()
+    
+    
+    st.subheader("Select Input")
+    col1, col2= st.columns([0.5,0.5])
+    with col1:
+        attack = st.slider("Attack", min_value=getMin('Attack'), max_value=getMax('Attack'))
+        defense = st.slider("Defense", min_value=getMin('Defense'), max_value=getMax('Defense'))
+        hp = st.slider("HP", min_value=getMin('HP'), max_value=getMax('HP'))
+        mp = st.slider("MP", min_value=getMin('MP'), max_value=530)
+        armor = st.slider("Armor", min_value=getMin('Armor'), max_value=getMax('Armor'))
+        spell_block = st.slider("Spell Block", min_value=getMin('Spell_Block'), max_value=getMax('Spell_Block'))
+        hp_regen = st.slider("HP Regen", min_value=getMin('HP_Regen'), max_value=getMax('HP_Regen'))
+        mp_regen = st.slider("MP Regen", min_value=getMin('MP_Regen'), max_value=getMax('MP_Regen'))
+        attack_damage = st.slider("Attack Damage", min_value=getMin('Attack_Damage'), max_value=getMax('Attack_Damage'))
+        attack_speed = st.slider("Attack Speed", min_value=getMin('Attack_Speed'), max_value=getMax('Attack_Speed'))
+        attack_range = st.slider("Attack Range", min_value=getMin('Attack_Range'), max_value=getMax('Attack_Range'))
+        partype = st.selectbox("Select Partype", ["Mana", "Energy", "Special"])
+    
+    with col2:
+        magic = st.slider("Magic", min_value=getMin('Magic'), max_value=getMax('Magic'))
+        difficulty = st.slider("Difficulty", min_value=getMin('Difficulty'), max_value=getMax('Difficulty'))
+        hp_per_level = st.slider("HP per Level", min_value=getMin('HP_per_Level'), max_value=getMax('HP_per_Level'))
+        mp_per_level = st.slider("MP per Level", min_value=getMin('MP_per_Level'), max_value=getMax('MP_per_Level'))
+        armor_per_level = st.slider("Armor per Level", min_value=getMin('Armor_per_Level'), max_value=getMax('Armor_per_Level'))
+        spell_block_per_level = st.slider("Spell Block per Level", min_value=getMin('Spell_Block_per_Level'), max_value=getMax('Spell_Block_per_Level'))
+        hp_regen_per_level = st.slider("HP Regen per Level", min_value=getMin('HP_Regen_per_Level'), max_value=getMax('HP_Regen_per_Level'))
+        mp_regen_per_level = st.slider("MP Regen per Level", min_value=getMin('MP_Regen_per_Level'), max_value=getMax('MP_Regen_per_Level'))
+        attack_damage_per_level = st.slider("Attack Damage per Level", min_value=getMin('Attack_Damage_per_Level'), max_value=getMax('Attack_Damage_per_Level'))
+        attack_speed_per_level = st.slider("Attack Speed per Level", min_value=getMin('Attack_Speed_per_Level'), max_value=getMax('Attack_Speed_per_Level'))
+        move_speed = st.slider("Move Speed", min_value=getMin('Move_Speed'), max_value=getMax('Move_Speed'))
+
+    col1, col2, col3 = st.columns([0.25, 0.5, 0.25])
+    with col2:
+        with st.form(key='model_selection_form_guess'):
+            model_option = st.selectbox('Choose a model', ['KNN', 'SVM', 'Ensemble'])
+            submit_button = st.form_submit_button(label='Guess Champions Role')
+
+            if submit_button:
+                sample_features_guess = pd.DataFrame([{
+                    "Partype": 1 if partype == "Mana" else (0.5 if partype == "Energy" else 0),
+                    "Attack": attack,
+                    "Defense": defense,
+                    "Magic": magic,
+                    "Difficulty": difficulty,
+                    "HP": hp,
+                    "HP_per_Level": hp_per_level,
+                    "MP": mp,
+                    "MP_per_Level": mp_per_level,
+                    "Move_Speed": move_speed,
+                    "Armor": armor,
+                    "Armor_per_Level": armor_per_level,
+                    "Spell_Block": spell_block,
+                    "Spell_Block_per_Level": spell_block_per_level,
+                    "Attack_Range": attack_range,
+                    "HP_Regen": hp_regen,
+                    "HP_Regen_per_Level": hp_regen_per_level,
+                    "MP_Regen": mp_regen,
+                    "MP_Regen_per_Level": mp_regen_per_level,
+                    "Attack_Damage": attack_damage,
+                    "Attack_Damage_per_Level": attack_damage_per_level,
+                    "Attack_Speed_per_Level": attack_speed_per_level,
+                    "Attack_Speed": attack_speed
+                }])    
+
+                if model_option == 'KNN':
+                    predicted_label = knn.predict(sample_features_guess)
+                elif model_option == 'SVM':
+                    predicted_label = svm.predict(sample_features_guess)
+                else:
+                    predicted_label = ensemble_model.predict(sample_features_guess)
+
+                category_map = ['Support', 'Tank', 'Marksman', 'Assassin', 'Mage', 'Fighter']
+                try:
+                    col1, col2, col3, col4 = st.columns([0.025, 0.2, 0.05, 0.2])
+                    image_folder = 'assets/LoL'
+
+                    with col2:
+                        predicted_label_image_anon = os.path.join(image_folder, 'role', "anonymous.webp")
+                        st.image(predicted_label_image_anon, caption=f"New Champion", width=192)
+
+                    with col4:
+                        predicted_label_image = os.path.join(image_folder, 'role', f"{category_map[int(predicted_label[0])]}.png")
+                        st.image(predicted_label_image, caption=f"Might be : {category_map[int(predicted_label[0])]}", width=192)
+                except Exception as e:
+                    print(e)
+
+
+    
     
