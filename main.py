@@ -375,11 +375,11 @@ elif page == "Machine Learning Demo":
     knn = KNeighborsClassifier(n_neighbors=5)
     svm = SVC(kernel='linear', C=1,probability=True, random_state=42)  
     ensemble_model = VotingClassifier(estimators=[('knn', knn), ('svm', svm)], voting='hard')
-    knn.fit(X_train, y_train)
+
     knn.fit(X_test, y_test)
-    svm.fit(X_train, y_train)
+
     svm.fit(X_test, y_test)
-    ensemble_model.fit(X_train, y_train)
+
     ensemble_model.fit(X_test, y_test)
 
     st.markdown('<div class="h1">League of Legends Champions Role Classifier</div>', unsafe_allow_html=True)
