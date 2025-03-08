@@ -84,7 +84,10 @@ if page == "Machine Learning Detail":
         """)
 
     with col2:
-        st.image('assets/LoL/Lol.webp')
+        if os.path.exists('assets/LoL/Lol.webp'):
+            st.image('assets/LoL/Lol.webp')
+        else:
+            st.write("Image file not found!")
 
     st.markdown('<br>', unsafe_allow_html=True)
     st.subheader("The Role of Machine Learning in League of Legends")
