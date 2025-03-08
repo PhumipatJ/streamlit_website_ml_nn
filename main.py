@@ -570,65 +570,77 @@ elif page == "Neural Network Detail":
         st.image(sample_image_path)
     
     st.markdown('<br>', unsafe_allow_html=True)
-    st.subheader("Valorant Weapons without Skin")
-    st.markdown('<br><br>', unsafe_allow_html=True)
 
-    
+    st.header("Data Collection", divider="green")
+
+    st.header("Valorant Weapons Skin Dataset", divider="green")
+    col1, col2,col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
+    with col1:
+        original_skin = st.button("Weapons without Skin")
+    with col2:
+        with_skin = st.button("Weapons with Skin")
+
+    if original_skin:
+        skin_type = "originalSkin"
+    elif with_skin:
+        skin_type = "withSkin"
+    else:
+        skin_type = "originalSkin" 
+
+    st.markdown('<br>', unsafe_allow_html=True)
     col1, col2, col3, col4 = st.columns([0.26, 0.2, 0.25, 0.25])
     with col1:
-        st.image(os.path.join(image_folder, 'originalSkin', "ghost.png"),caption="Ghost",width=200)
+        st.image(os.path.join(image_folder, skin_type, "ghost.png"),caption="Ghost",width=200)
     with col2:
-        st.image(os.path.join(image_folder, 'originalSkin', "sheriff.png"),caption="Sheriff",width=150)
+        st.image(os.path.join(image_folder, skin_type, "sheriff.png"),caption="Sheriff",width=150)
     with col3:
-        st.image(os.path.join(image_folder, 'originalSkin', "ares.png"),caption="Ares",width=200)
+        st.image(os.path.join(image_folder, skin_type, "ares.png"),caption="Ares",width=200)
     with col4: 
-        st.image(os.path.join(image_folder, 'originalSkin', "odin.png"),caption="Odin",width=200)
+        st.image(os.path.join(image_folder, skin_type, "odin.png"),caption="Odin",width=200)
 
     st.markdown('<br><br>', unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
     with col1:
-        st.image(os.path.join(image_folder, 'originalSkin', "shorty.png"),caption="Shorty",width=200)
+        st.image(os.path.join(image_folder, skin_type, "shorty.png"),caption="Shorty",width=200)
     with col2:
-        st.image(os.path.join(image_folder, 'originalSkin', "judge.png"),caption="Judge",width=200) 
+        st.image(os.path.join(image_folder, skin_type, "judge.png"),caption="Judge",width=200) 
     with col3:
-        st.image(os.path.join(image_folder, 'originalSkin', "stinger.png"),caption="Stinger",width=200)
+        st.image(os.path.join(image_folder, skin_type, "stinger.png"),caption="Stinger",width=200)
     with col4: 
-        st.image(os.path.join(image_folder, 'originalSkin', "spectre.png"),caption="Spectre",width=200)
+        st.image(os.path.join(image_folder, skin_type, "spectre.png"),caption="Spectre",width=200)
     
     st.markdown('<br><br>', unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
     with col1:
-        st.image(os.path.join(image_folder, 'originalSkin', "bucky.png"),caption="Bucky",width=200)
+        st.image(os.path.join(image_folder, skin_type, "bucky.png"),caption="Bucky",width=200)
     with col2:
-        st.image(os.path.join(image_folder, 'originalSkin', "phantom.png"),caption="Phantom",width=200) 
+        st.image(os.path.join(image_folder, skin_type, "phantom.png"),caption="Phantom",width=200) 
     with col3:
-        st.image(os.path.join(image_folder, 'originalSkin', "vandal.png"),caption="Vandal",width=200)
+        st.image(os.path.join(image_folder, skin_type, "vandal.png"),caption="Vandal",width=200)
     with col4: 
-        st.image(os.path.join(image_folder, 'originalSkin', "bulldog.png"),caption="Bulldog",width=200)
+        st.image(os.path.join(image_folder, skin_type, "bulldog.png"),caption="Bulldog",width=200)
     
     st.markdown('<br><br>', unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
     with col1:
-        st.image(os.path.join(image_folder, 'originalSkin', "marshal.png"),caption="Marshal",width=200)
+        st.image(os.path.join(image_folder, skin_type, "marshal.png"),caption="Marshal",width=200)
     with col2:
-        st.image(os.path.join(image_folder, 'originalSkin', "guardian.png"),caption="Guardian",width=200) 
+        st.image(os.path.join(image_folder, skin_type, "guardian.png"),caption="Guardian",width=200) 
     with col3:
-        st.image(os.path.join(image_folder, 'originalSkin', "outlaw.png"),caption="Outlaw",width=200)
+        st.image(os.path.join(image_folder, skin_type, "outlaw.png"),caption="Outlaw",width=200)
     with col4: 
-        st.image(os.path.join(image_folder, 'originalSkin', "operator.png"),caption="Operator",width=200)
+        st.image(os.path.join(image_folder, skin_type, "operator.png"),caption="Operator",width=200)
     
     st.markdown('<br><br>', unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns([0.1, 0.2, 0.2, 0.25])
     with col2:
-        st.image(os.path.join(image_folder, 'originalSkin', "classic.png"),caption="Classic",width=150)
+        st.image(os.path.join(image_folder, skin_type, "classic.png"),caption="Classic",width=150)
     with col3:
-        st.image(os.path.join(image_folder, 'originalSkin', "frenzy.png"),caption="Frenzy",width=150) 
+        st.image(os.path.join(image_folder, skin_type, "frenzy.png"),caption="Frenzy",width=150) 
     with col4:
-        st.image(os.path.join(image_folder, 'originalSkin', "melee.png"),caption="Melee",width=175)
+        st.image(os.path.join(image_folder, skin_type, "melee.png"),caption="Melee",width=175)
     
-    st.markdown('<br>', unsafe_allow_html=True)
-    st.header("Data Collection", divider="green")
