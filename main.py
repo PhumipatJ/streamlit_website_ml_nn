@@ -571,8 +571,9 @@ elif page == "Neural Network Detail":
     
     st.markdown('<br>', unsafe_allow_html=True)
     st.subheader("Valorant Weapons without Skin")
-    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('<br><br>', unsafe_allow_html=True)
 
+    
     col1, col2, col3, col4 = st.columns([0.26, 0.2, 0.25, 0.25])
     with col1:
         st.image(os.path.join(image_folder, 'originalSkin', "ghost.png"),caption="Ghost",width=200)
@@ -623,8 +624,11 @@ elif page == "Neural Network Detail":
 
     col1, col2, col3, col4 = st.columns([0.1, 0.2, 0.2, 0.25])
     with col2:
-        st.image(os.path.join(image_folder, 'originalSkin', "classic.png"),caption="Classic",width=152)
+        st.image(os.path.join(image_folder, 'originalSkin', "classic.png"),caption="Classic",width=150)
     with col3:
-        st.image(os.path.join(image_folder, 'originalSkin', "frenzy.png"),caption="Frenzy",width=152) 
+        st.image(os.path.join(image_folder, 'originalSkin', "frenzy.png"),caption="Frenzy",width=150) 
     with col4:
         st.image(os.path.join(image_folder, 'originalSkin', "melee.png"),caption="Melee",width=175)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Data Collection", divider="green")
