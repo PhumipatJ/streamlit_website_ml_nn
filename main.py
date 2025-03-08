@@ -47,7 +47,46 @@ st.markdown(
 page = st.sidebar.selectbox("Select a Page", ["Machine Learning Detail", "Machine Learning Demo", "Neural Network Detail", "Neural Network Demo"])
 
 if page == "Machine Learning Detail":
-    st.markdown('<div class="h1">Test</div>', unsafe_allow_html=True)
+    st.markdown('<div class="h1">Machine Learning Overview</div>', unsafe_allow_html=True)
+    
+    # Subheader with explanation
+    st.markdown('<div class="h2">What is Machine Learning?</div>', unsafe_allow_html=True)
+    st.markdown("""
+        <p>Machine Learning (ML) is a branch of artificial intelligence (AI) that involves the creation of algorithms 
+        which allow computers to learn from and make predictions or decisions based on data.</p>
+    """, unsafe_allow_html=True)
+
+    # Details about types of Machine Learning
+    st.markdown('<div class="h3">Types of Machine Learning</div>', unsafe_allow_html=True)
+    st.markdown("""
+        <ul>
+            <li><strong>Supervised Learning:</strong> The model is trained on labeled data.</li>
+            <li><strong>Unsupervised Learning:</strong> The model finds patterns in data without labels.</li>
+            <li><strong>Reinforcement Learning:</strong> The model learns by interacting with the environment to maximize rewards.</li>
+        </ul>
+    """, unsafe_allow_html=True)
+    
+    # Adding some more information
+    st.markdown('<div class="h3">Popular Algorithms</div>', unsafe_allow_html=True)
+    st.markdown("""
+        <ol>
+            <li><strong>Linear Regression</strong> - Used for predicting continuous values.</li>
+            <li><strong>Logistic Regression</strong> - Used for binary classification problems.</li>
+            <li><strong>Random Forest</strong> - A decision tree-based ensemble learning method.</li>
+            <li><strong>Support Vector Machines</strong> - A classifier used for both linear and nonlinear problems.</li>
+            <li><strong>K-Means Clustering</strong> - An unsupervised learning algorithm for clustering data.</li>
+        </ol>
+    """, unsafe_allow_html=True)
+    
+    # Adding a visual or diagram placeholder (if applicable)
+    st.markdown('<div class="h3">Visuals and Diagrams</div>', unsafe_allow_html=True)
+    st.markdown("""
+        <p>Below is an example of how Machine Learning models can be visualized:</p>
+        <img src="https://example.com/ml_diagram.png" alt="Machine Learning Diagram" width="500"/>
+    """, unsafe_allow_html=True)
+    
+    # Footer or additional content
+    st.markdown('<div class="footer">Machine Learning Detail Page Footer</div>', unsafe_allow_html=True)
 
 elif page == "Machine Learning Demo":
     def load_data(file):
