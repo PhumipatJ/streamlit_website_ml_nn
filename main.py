@@ -550,6 +550,81 @@ elif page == "Machine Learning Demo":
                 except Exception as e:
                     print(e)
 
+elif page == "Neural Network Detail":
+    st.markdown('<div class="h1">Neural Network Model Development</div>', unsafe_allow_html=True)
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Neural Network for Valorant Weapon Skin Recognition Using CNN", divider="green")
 
+    col1, col2 = st.columns([0.5, 0.5])
+
+    with col1:
+        st.subheader("What is Valorant ?")
+        st.write("&emsp;&emsp;Valorant is a tactical first-person shooter (FPS) game developed by Riot Games. It features 5v5 matches where players select unique characters called Agents, each with their own abilities. The game emphasizes strategy, precise shooting, and teamwork.")
+        st.subheader("What are Valorant Weapon Skins ?")
+        st.write("&emsp;&emsp;In Valorant, players can customize their weapons with skins—cosmetic changes that alter a weapon’s look, sound, and animations while some exclusive skins may change their appearance. There are 19 weapon types, each with multiple skins, some featuring variants or upgrades. While skins don’t affect gameplay, identifying them can be difficult.")
+        
+
+    with col2:
+        image_folder = 'assets/Valorant'
+        sample_image_path = os.path.join(image_folder, 'valorant', "valorant.webp")
+        st.image(sample_image_path)
     
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.subheader("Valorant Weapons without Skin")
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns([0.26, 0.2, 0.25, 0.25])
+    with col1:
+        st.image(os.path.join(image_folder, 'originalSkin', "ghost.png"),caption="Ghost",width=200)
+    with col2:
+        st.image(os.path.join(image_folder, 'originalSkin', "sheriff.png"),caption="Sheriff",width=150)
+    with col3:
+        st.image(os.path.join(image_folder, 'originalSkin', "ares.png"),caption="Ares",width=200)
+    with col4: 
+        st.image(os.path.join(image_folder, 'originalSkin', "odin.png"),caption="Odin",width=200)
+
+    st.markdown('<br><br>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
+    with col1:
+        st.image(os.path.join(image_folder, 'originalSkin', "shorty.png"),caption="Shorty",width=200)
+    with col2:
+        st.image(os.path.join(image_folder, 'originalSkin', "judge.png"),caption="Judge",width=200) 
+    with col3:
+        st.image(os.path.join(image_folder, 'originalSkin', "stinger.png"),caption="Stinger",width=200)
+    with col4: 
+        st.image(os.path.join(image_folder, 'originalSkin', "spectre.png"),caption="Spectre",width=200)
     
+    st.markdown('<br><br>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
+    with col1:
+        st.image(os.path.join(image_folder, 'originalSkin', "bucky.png"),caption="Bucky",width=200)
+    with col2:
+        st.image(os.path.join(image_folder, 'originalSkin', "phantom.png"),caption="Phantom",width=200) 
+    with col3:
+        st.image(os.path.join(image_folder, 'originalSkin', "vandal.png"),caption="Vandal",width=200)
+    with col4: 
+        st.image(os.path.join(image_folder, 'originalSkin', "bulldog.png"),caption="Bulldog",width=200)
+    
+    st.markdown('<br><br>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
+    with col1:
+        st.image(os.path.join(image_folder, 'originalSkin', "marshal.png"),caption="Marshal",width=200)
+    with col2:
+        st.image(os.path.join(image_folder, 'originalSkin', "guardian.png"),caption="Guardian",width=200) 
+    with col3:
+        st.image(os.path.join(image_folder, 'originalSkin', "outlaw.png"),caption="Outlaw",width=200)
+    with col4: 
+        st.image(os.path.join(image_folder, 'originalSkin', "operator.png"),caption="Operator",width=200)
+    
+    st.markdown('<br><br>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns([0.1, 0.2, 0.2, 0.25])
+    with col2:
+        st.image(os.path.join(image_folder, 'originalSkin', "classic.png"),caption="Classic",width=152)
+    with col3:
+        st.image(os.path.join(image_folder, 'originalSkin', "frenzy.png"),caption="Frenzy",width=152) 
+    with col4:
+        st.image(os.path.join(image_folder, 'originalSkin', "melee.png"),caption="Melee",width=175)
