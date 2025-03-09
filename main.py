@@ -894,9 +894,21 @@ elif page == "Neural Network Detail":
 elif page == "Neural Network Demo":
     st.markdown('<div class="h1">Valorant Weapons Skin Recognition</div>', unsafe_allow_html=True)
     #https://drive.google.com/file/d/1oR8M0y__dFMcK_NfJplTp3Mg7BPTRiL5/view?usp=sharing
-    file_id = '1oR8M0y__dFMcK_NfJplTp3Mg7BPTRiL5' 
-    gdown.download(f'https://drive.google.com/uc?id={file_id}', 'valorant_skin_recognition.h5', quiet=False)
-    model = load_model("valorant_skin_recognition.h5")
+
+    def load_model_locally():
+        model_path = "valorant_skin_recognition.h5"
+        
+        if os.path.exists(model_path):
+            print("Model found locally, loading...")
+            return tf.keras.models.load_model(model_path)
+        else:
+            print("Model not found locally, downloading from Google Drive...")
+            file_id = '1oR8M0y__dFMcK_NfJplTp3Mg7BPTRiL5' 
+            gdown.download(f'https://drive.google.com/uc?id={file_id}', model_path, quiet=False)
+            print("Model downloaded, loading...")
+            return tf.keras.models.load_model(model_path)
+
+    model = load_model_locally()
 
     category_map = {
         0: "ares", 1: "bucky", 2: "bulldog", 3: "classic", 4: "frenzy", 5: "ghost", 6: "guardian", 7: "judge",
