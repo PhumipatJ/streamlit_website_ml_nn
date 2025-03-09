@@ -18,6 +18,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from PIL import Image
+import gdown
 
 st.markdown(
     """
@@ -892,6 +893,9 @@ elif page == "Neural Network Detail":
 
 elif page == "Neural Network Demo":
     st.markdown('<div class="h1">Valorant Weapons Skin Recognition</div>', unsafe_allow_html=True)
+    #https://drive.google.com/file/d/1oR8M0y__dFMcK_NfJplTp3Mg7BPTRiL5/view?usp=sharing
+    file_id = '1oR8M0y__dFMcK_NfJplTp3Mg7BPTRiL5' 
+    gdown.download(f'https://drive.google.com/uc?id={file_id}', 'valorant_skin_recognition.h5', quiet=False)
     model = load_model("valorant_skin_recognition.h5")
 
     category_map = {
@@ -937,9 +941,6 @@ elif page == "Neural Network Demo":
             img_array /= 255.0 
             predictions = model.predict(img_array)
             predicted_class = np.argmax(predictions, axis=1)[0]
-
-
-
       
         st.markdown('<br>', unsafe_allow_html=True)
 
