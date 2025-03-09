@@ -89,7 +89,7 @@ if page == "Machine Learning Detail":
         st.image(sample_image_path)
 
     st.markdown('<br>', unsafe_allow_html=True)
-    st.subheader("The Role of Machine Learning in League of Legends")
+    st.subheader("How does Machine Learning help in classifying LoL Champions Role ?")
     st.write("&emsp;&emsp;Machine Learning (ML) is a field of artificial intelligence that allows systems to learn patterns from data without being explicitly programmed. In the context of League of Legends, machine learning models can be employed to automate the classification of champions into their respective roles (e.g., `Fighter`, `Assassin`, `Mage`, etc.), based on various features of the champion, such as their stats, abilities, and in-game behavior.")
 
     st.markdown('<br>', unsafe_allow_html=True)
@@ -553,7 +553,7 @@ elif page == "Machine Learning Demo":
 elif page == "Neural Network Detail":
     st.markdown('<div class="h1">Neural Network Model Development</div>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
-    st.header("Neural Network for Valorant Weapon Skin Recognition Using CNN", divider="green")
+    st.header("Neural Network for Valorant Weapon Skin Recognition using CNN", divider="green")
 
     col1, col2 = st.columns([0.5, 0.5])
 
@@ -571,7 +571,70 @@ elif page == "Neural Network Detail":
     
     st.markdown('<br>', unsafe_allow_html=True)
 
+    st.header("How does CNN help in classifying Valorant Weapon Skins ?", divider="green")
+    st.write("&emsp;&emsp;A Convolutional Neural Network (CNN) processes images through multiple layers to extract and classify features. For Valorant weapon skins, a CNN can differentiate skins based on colors, patterns, and textures. Let’s break down how each layer contributes to classification.")
+    
+    col1, col2 = st.columns([0.5, 0.5])
+    with col1:
+        st.subheader("1. Convolutional Layer")
+        st.write("""
+        Role: Detects edges, shapes, textures, and patterns.
+        - Uses filters (kernels) to scan the image and extract important details.
+        - Early layers detect edges and outlines of weapons.
+        - Deeper layers learn textures and patterns unique to each skin.
+        """)
+
+    with col2:
+        st.subheader("2. Pooling Layer ")
+        st.write("""
+        Role: Reduces the spatial size of the image while keeping key features.
+        - Max Pooling selects the most prominent features.
+        - Average Pooling smooths the image.
+        """)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns([0.5, 0.5])
+    with col1:
+        st.subheader("3. Flatten Layer")
+        st.write("""
+        Role: Converts the 2D image matrix into a 1D feature vector.
+        - Prepares extracted features for the next stage (fully connected layer).
+        """)
+    
+    with col2:
+        st.subheader("4. Fully Connected Layer")
+        st.write("""
+        Role: Uses the extracted features to classify the image.
+        - Each neuron represents a specific skin category.
+        - Uses Softmax activation to predict the probability of each skin.
+        """)
+
     st.header("Data Collection", divider="green")
+    st.write("&emsp;&emsp;The data used to classify Valorant weapon skins is collected from the [Riot Games Developer Portal](https://developer.riotgames.com/docs/valorant). Specifically, the skins and related assets come from the Public Content Catalog which can be downloaded for free, which provides various Valorant assets. Weapon skin images (stored in `.png` format) also included but there's one problem.")
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.subheader("Processing the Weapon Skin Data")
+    st.write("""
+    &emsp;&emsp;When downloaded, all 19 weapon skins are stored in a single folder as `.png` files. However, the file names are random IDs.
+
+    - `10B39A6F-494C-CA3C-497F-24877AB43A47.png`
+    - `27C1C5E0-4829-DFB2-9085-33BC04A73971.png`
+    - `AA1728CF-41B5-3C90-99A8-F9857CB083F4.png`
+
+    &emsp;&emsp;These filenames do not provide any useful information about the weapon or skin name. Because of this, I have to manually open each image one by one and classify them into separate folders based on their weapon type.
+
+    - `/phantom/` → (All Phantom skins go here)
+    - `/vandal/` → (All Vandal skins go here)
+    - `/spectre/` → (All Spectre skins go here)
+
+    &emsp;&emsp;This manual classification process is necessary to correctly label the images before training the Convolutional Neural Network (CNN) for weapon skin recognition. After sorting, the images are further processed and augmented to improve model accuracy.
+    """)
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.subheader("The Real Struggle")
+    st.write("&emsp;&emsp;Manually sorting hundreds of randomly named images was an absolute nightmare. It took me 3 hours to finish this process. If I had a CNN model already trained, it probably could have done this in seconds. But no—here I am, manually dragging and dropping files like it’s the Stone Age of AI. 😭")
+
 
     st.header("Valorant Weapons Skin Dataset", divider="green")
     col1, col2,col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
@@ -643,4 +706,8 @@ elif page == "Neural Network Detail":
         st.image(os.path.join(image_folder, skin_type, "frenzy.png"),caption="Frenzy",width=150) 
     with col4:
         st.image(os.path.join(image_folder, skin_type, "melee.png"),caption="Melee",width=175)
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Exploratory Data Analysis (EDA)", divider="green")
+    
     
