@@ -11,6 +11,8 @@ from sklearn.ensemble import VotingClassifier
 import os
 import seaborn as sns
 import random
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 st.markdown(
     """
@@ -711,5 +713,37 @@ elif page == "Neural Network Detail":
     st.header("Exploratory Data Analysis (EDA)", divider="green")
     
     data_dir = data_dir = os.path.join("assets", "Valorant", "weaponSkin")  
-    st.write("Weapon Categories:", os.listdir(data_dir))
-    
+    #st.write("Weapon Categories:", os.listdir(data_dir))
+    # Set up batch size and image size
+    batch_size = 32
+    img_size = (224, 224)  # Resize images
+
+    # Set a seed for reproducibility
+    seed = 123  # You can use any integer value here
+
+    # Load the training dataset (80% of the data, for example)
+    train_ds = image_dataset_from_directory(
+        data_dir,
+        validation_split=0.2,  # 20% data for validation
+        subset="training",
+        shuffle=True,
+        batch_size=batch_size,
+        image_size=img_size,
+        seed=seed  # Provide the seed value here
+    )
+
+    # Load the validation dataset (20% of the data, for example)
+    test_ds = image_dataset_from_directory(
+        data_dir,
+        validation_split=0.2,  # 20% data for validation
+        subset="validation",
+        shuffle=True,
+        batch_size=batch_size,
+        image_size=img_size,
+        seed=seed  # Provide the seed value here
+    )
+
+    # Check class names (weapon types)
+    class_names = train_ds.class_names
+    st.write("Classes:", class_names)
+        
