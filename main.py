@@ -19,6 +19,8 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from PIL import Image
 import gdown
+import shutil
+import time
 
 st.markdown(
     """
@@ -971,3 +973,73 @@ elif page == "Neural Network Demo":
 
     except Exception as e:
         print(e)
+    
+
+    st.header("Classify and Organize Weapon Skins!", divider="green")
+
+    def classify_and_move_image(image_path):
+        image = Image.open(image_path).convert("RGB")
+        img = image.resize((224, 224))
+        img_array = np.array(img, dtype=np.float32)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array /= 255.0
+        
+        predictions = model.predict(img_array)
+        predicted_class = np.argmax(predictions, axis=1)[0]
+        
+        predicted_category = category_map.get(predicted_class, "Unknown")
+        
+        # Move the image to the correct folder based on prediction
+        destination_folder = os.path.join("forUserDownload", predicted_category)
+        
+        if not os.path.exists(destination_folder):
+            os.makedirs(destination_folder)
+
+        # Move image to the corresponding weapon folder
+        shutil.move(image_path, os.path.join(destination_folder, os.path.basename(image_path)))
+        
+        return predicted_category
+
+    small_file_id = "1rnzG8dRue4NdVTU9U_DqcgrD1jZ1LBAa"
+    large_file_id = "1M3FRsLCv-TRlJ94rtVe1d2KzTbKZgmJk"
+
+    def download_from_drive(file_id, output_name):
+        if not os.path.exists(output_name): 
+            gdown.download(f"https://drive.google.com/uc?id={file_id}", output_name, quiet=False)
+
+    small_example = "smallDataset.zip"
+    large_example = "largeDataset.zip"
+
+    col1, col2, col3 = st.columns([0.3, 0.3, 0.3])
+    with col1:
+        download_from_drive(small_file_id, small_example)
+        with open(small_example, "rb") as f:
+            st.download_button("Download Small Dataset (145 Images)", f, file_name="smallDataset.zip", mime="application/zip")
+
+    with col2:
+        download_from_drive(large_file_id, large_example)
+        with open(large_example, "rb") as f:
+            st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
+
+    # File uploader to upload multiple images
+    uploaded_files = st.file_uploader("Download `.zip` file and browse all Weapon Skin Images in `/forUserDownload/allWeapon` the model will classify and insert each weapons skin into 19 weapons type folders", accept_multiple_files=True)
+
+    if uploaded_files:
+        start_time = time.time()  # Start tracking upload + classification
+        st.write(f"This might take several minutes")
+        for uploaded_file in uploaded_files:
+            # Save to 'allWeapon' folder
+            all_weapon_folder = "forUserDownload/allWeapon"
+            if not os.path.exists(all_weapon_folder):
+                os.makedirs(all_weapon_folder)
+            
+            # Save uploaded file
+            file_path = os.path.join(all_weapon_folder, uploaded_file.name)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            
+            # Classify and move the image
+            predicted_category = classify_and_move_image(file_path)
+
+        end_time = time.time()
+        st.write(f"Successfully organized in {end_time - start_time:.2f} seconds.")
