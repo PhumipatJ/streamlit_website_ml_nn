@@ -710,4 +710,6 @@ elif page == "Neural Network Detail":
     st.markdown('<br>', unsafe_allow_html=True)
     st.header("Exploratory Data Analysis (EDA)", divider="green")
     
+    data_dir = data_dir = os.path.join("assets", "Valorant", "weaponSkin")  
+    st.write("Weapon Categories:", os.listdir(data_dir))
     
