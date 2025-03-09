@@ -1025,21 +1025,27 @@ elif page == "Neural Network Demo":
     uploaded_files = st.file_uploader("Download `.zip` file and browse all Weapon Skin Images in `/forUserDownload/allWeapon` the model will classify and insert each weapons skin into 19 weapons type folders", accept_multiple_files=True)
 
     if uploaded_files:
-        start_time = time.time()  # Start tracking upload + classification
-        st.write(f"This might take several minutes")
+        start_time = time.time()  # Start timing
+        base_output_folder = "forUserDownload"  # Main folder for organized files
+        all_weapon_folder = os.path.join(base_output_folder, "allWeapon")
+
+        # Ensure the folder exists
+        os.makedirs(all_weapon_folder, exist_ok=True)
+
+        # Save uploaded images to "allWeapon"
         for uploaded_file in uploaded_files:
-            # Save to 'allWeapon' folder
-            all_weapon_folder = "forUserDownload/allWeapon"
-            if not os.path.exists(all_weapon_folder):
-                os.makedirs(all_weapon_folder)
-            
-            # Save uploaded file
             file_path = os.path.join(all_weapon_folder, uploaded_file.name)
             with open(file_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
-            
-            # Classify and move the image
-            predicted_category = classify_and_move_image(file_path)
 
+            # Classify and move the image
+            predicted_category = classify_and_move_image(file_path)  
+
+        # Create a ZIP file after classification
+        zip_file_path = "organized_weapon_skins.zip"
+        shutil.make_archive("organized_weapon_skins", 'zip', base_output_folder)
+
+        # Print time taken
         end_time = time.time()
-        st.write(f"Successfully organized in {end_time - start_time:.2f} seconds.")
+        elapsed_time = round(end_time - start_time, 2)
+        st.write(f"Successfully organized and zipped files in {elapsed_time} seconds.")
