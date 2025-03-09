@@ -921,14 +921,11 @@ elif page == "Neural Network Demo":
     }
 
     def get_random_image():
-        # Get a random folder from the category_map
         random_category = random.choice(list(category_map.values()))
         category_folder = os.path.join("assets", "Valorant", "weaponSkin", random_category)
 
-        # Get all files in the selected folder
         image_files = [f for f in os.listdir(category_folder) if f.endswith('.png') or f.endswith('.jpg')]
 
-        # Randomly select an image
         random_image = random.choice(image_files)
         image_path = os.path.join(category_folder, random_image)
 
@@ -960,7 +957,6 @@ elif page == "Neural Network Demo":
       
         st.markdown('<br>', unsafe_allow_html=True)
 
-        # Display the images in Streamlit columns
     col1, col2, col3 = st.columns([0.33, 0.33, 0.33])
     try:
         with col1:
@@ -991,13 +987,11 @@ elif page == "Neural Network Demo":
         
         predicted_category = category_map.get(predicted_class, "Unknown")
         
-        # Move the image to the correct folder based on prediction
         destination_folder = os.path.join("forUserDownload", predicted_category)
         
         if not os.path.exists(destination_folder):
             os.makedirs(destination_folder)
 
-        # Move image to the corresponding weapon folder
         shutil.move(image_path, os.path.join(destination_folder, os.path.basename(image_path)))
         
         return predicted_category
@@ -1006,18 +1000,15 @@ elif page == "Neural Network Demo":
         if not os.path.exists(output_name): 
             gdown.download(f"https://drive.google.com/uc?id={file_id}", output_name, quiet=False)
 
-    # Function to create a zip file in memory
     def create_zip_in_memory(base_output_folder):
-        # Create a zip file in memory
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            # Walk through the folder and add files to the zip archive
             for foldername, subfolders, filenames in os.walk(base_output_folder):
                 for filename in filenames:
                     file_path = os.path.join(foldername, filename)
                     zip_file.write(file_path, os.path.relpath(file_path, base_output_folder))
         
-        zip_buffer.seek(0)  # Rewind the buffer to the beginning for downloading
+        zip_buffer.seek(0)  
         return zip_buffer
 
     small_file_id = "1rnzG8dRue4NdVTU9U_DqcgrD1jZ1LBAa"
@@ -1030,40 +1021,33 @@ elif page == "Neural Network Demo":
     with col1:
         download_from_drive(small_file_id, small_example)
         with open(small_example, "rb") as f:
-            st.download_button("Download Small Dataset (145 Images)", f, file_name="smallDataset.zip", mime="application/zip")
+            st.download_button("Download Small Dataset (145 Images) `recommended`", f, file_name="smallDataset.zip", mime="application/zip")
 
     with col2:
         download_from_drive(large_file_id, large_example)
         with open(large_example, "rb") as f:
             st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
 
-    # File uploader to upload multiple images
-    uploaded_files = st.file_uploader("Upload Weapon Skin Images", accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Extract file and browse into `/forUserDownload/allWeapon` to upload Weapon Skin images", accept_multiple_files=True)
 
     if uploaded_files:
-        start_time = time.time()  # Start timing
-        base_output_folder = "forUserDownload"  # Main folder for organized files
+        start_time = time.time() 
+        base_output_folder = "forUserDownload" 
         all_weapon_folder = os.path.join(base_output_folder, "allWeapon")
 
-        # Ensure the folder exists
         os.makedirs(all_weapon_folder, exist_ok=True)
-
-        # Save uploaded images to "allWeapon"
+        st.write(f"Uploads too much images may take several minutes.")
         for uploaded_file in uploaded_files:
             file_path = os.path.join(all_weapon_folder, uploaded_file.name)
             with open(file_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
 
-            # Classify and move the image
             classify_and_move_image(file_path)  
 
-        # Create a ZIP file in memory
         zip_file_buffer = create_zip_in_memory(base_output_folder)
 
-        # Print time taken
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
         st.write(f"Successfully organized and zipped files in {elapsed_time} seconds.")
 
-        # Provide a download button for the user to download the zip file
         st.download_button("Download Organized Weapon Skins", zip_file_buffer, file_name="organized_weapon_skins.zip", mime="application/zip")
