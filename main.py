@@ -15,6 +15,9 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras import layers, models
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+from PIL import Image
 
 st.markdown(
     """
@@ -889,49 +892,69 @@ elif page == "Neural Network Detail":
 
 elif page == "Neural Network Demo":
     st.markdown('<div class="h1">Valorant Weapons Skin Recognition</div>', unsafe_allow_html=True)
-    
-    data_dir = os.path.join("assets", "Valorant", "weaponSkin")  
+    model = load_model("valorant_skin_recognition.h5")
 
-    # Load the training dataset (80% of the data)
-    train_data = image_dataset_from_directory(
-        data_dir,
-        validation_split=0.2, 
-        subset="training",
-        shuffle=True,
-        batch_size=32,
-        image_size=(224, 224) ,
-        seed=42 
-    )
+    category_map = {
+        0: "ares", 1: "bucky", 2: "bulldog", 3: "classic", 4: "frenzy", 5: "ghost", 6: "guardian", 7: "judge",
+        8: "marshal", 9: "melee", 10: "odin", 11: "operator", 12: "outlaw", 13: "phantom", 14: "sheriff", 15: "shorty",
+        16: "spectre", 17: "stinger", 18: "vandal"
+    }
 
-    # Load the test dataset (20% of the data)
-    test_data = image_dataset_from_directory(
-        data_dir,
-        validation_split=0.2, 
-        subset="validation",
-        shuffle=True,
-        batch_size=32,
-        image_size=(224, 224),
-        seed=42
-    )
+    def get_random_image():
+        # Get a random folder from the category_map
+        random_category = random.choice(list(category_map.values()))
+        category_folder = os.path.join("assets", "Valorant", "weaponSkin", random_category)
 
-    normalization_layer = tf.keras.layers.Rescaling(1./255)
-    train_data = train_data.map(lambda x, y: (normalization_layer(x), y))
-    test_data = test_data.map(lambda x, y: (normalization_layer(x), y))
+        # Get all files in the selected folder
+        image_files = [f for f in os.listdir(category_folder) if f.endswith('.png') or f.endswith('.jpg')]
 
-    model = models.Sequential([
-        layers.Conv2D(32, (3,3), activation='relu', input_shape=(224, 224, 3)),
-        layers.MaxPooling2D(2,2),
+        # Randomly select an image
+        random_image = random.choice(image_files)
+        image_path = os.path.join(category_folder, random_image)
 
-        layers.Conv2D(64, (3,3), activation='relu'),
-        layers.MaxPooling2D(2,2),
+        return image_path, random_category, random_image
 
-        layers.Conv2D(128, (3,3), activation='relu'),
-        layers.MaxPooling2D(2,2),
 
-        layers.Flatten(),
-        layers.Dense(128, activation='relu'),
-        layers.Dense(19, activation='softmax')
-    ])
+    st.header("Guess the Valorant Weapons Skin !", divider="green")
+    row7col1, row7col2 = st.columns([0.175, 0.7])
 
-    model.compile(optimizer=Adam(learning_rate=0.0005), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    # Initialize sample image paths
+    sample_image_path = ""
+    true_label_image_path = ""
+    predicted_label_image_path = ""
 
+    with row7col1:
+        with st.form(key='random_form'):
+            submit_button = st.form_submit_button(label='Random Weapon Skins')
+
+        if submit_button:
+            image_path, category, image_name = get_random_image()
+            imageShow = Image.open(image_path)
+            image = Image.open(image_path).convert("RGB")
+            img = image.resize((224, 224)) 
+            img_array = np.array(img, dtype=np.float32) 
+            img_array = np.expand_dims(img_array, axis=0)  
+            img_array /= 255.0 
+            predictions = model.predict(img_array)
+            predicted_class = np.argmax(predictions, axis=1)[0]
+
+
+
+      
+        st.markdown('<br>', unsafe_allow_html=True)
+
+        # Display the images in Streamlit columns
+    col1, col2, col3 = st.columns([0.33, 0.33, 0.33])
+    try:
+        with col1:
+            st.image(imageShow, caption=f"Random Skin")
+
+        image_folder = 'assets/Valorant'
+        with col2:
+            st.image(os.path.join(image_folder, "originalSkin", f"{category}.png"), caption=f"True Label : {category.capitalize()}")
+
+        with col3:
+            st.image(os.path.join(image_folder, "originalSkin", f"{category_map[predicted_class]}.png"), caption=f"Predicted Label : {category_map[predicted_class].capitalize()}")
+
+    except Exception as e:
+        print(e)
