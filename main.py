@@ -13,6 +13,8 @@ import seaborn as sns
 import random
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image_dataset_from_directory
+from tensorflow.keras import layers, models
+from tensorflow.keras.optimizers import Adam
 
 st.markdown(
     """
@@ -635,7 +637,7 @@ elif page == "Neural Network Detail":
 
     st.markdown('<br>', unsafe_allow_html=True)
     st.subheader("The Real Struggle")
-    st.write("&emsp;&emsp;Manually sorting hundreds of randomly named images was an absolute nightmare. It took me 3 hours to finish this process. If I had a CNN model already trained, it probably could have done this in seconds. But no—here I am, manually dragging and dropping files like it’s the Stone Age of AI. 😭")
+    st.write("&emsp;&emsp;Manually sorting thousands of randomly named images was an absolute nightmare. It took me 3 hours to finish this process. If I had a CNN model already trained, it probably could have done this in seconds. But no—here I am, manually dragging and dropping files like it’s the Stone Age of AI. 😭")
 
 
     st.header("Valorant Weapons Skin Dataset", divider="green")
@@ -710,40 +712,226 @@ elif page == "Neural Network Detail":
         st.image(os.path.join(image_folder, skin_type, "melee.png"),caption="Melee",width=175)
 
     st.markdown('<br>', unsafe_allow_html=True)
-    st.header("Exploratory Data Analysis (EDA)", divider="green")
+    st.header("Splitting Data and Resize", divider="green")  
+
+    col1, col2 = st.columns([0.5, 0.5])
+    with col1:
+        st.code(f"""
+            # Load the training dataset (80% of the data)
+            train_data = image_dataset_from_directory(
+                data_dir,
+                validation_split=0.2, 
+                subset="training",
+                shuffle=True,
+                batch_size=32,
+                image_size=(224, 224),
+                seed=42 
+            )
+            # Spliting 1792 files for training.
+        """)
+        st.write("- `batch_size = 32` sets the number of images to be processed in each batch during training and validation. A batch size of 32 means that 32 images will be passed to the model at once for training.")
+        
+    with col2: 
+        st.code(f"""
+        # Load the test dataset (20% of the data)
+        test_data = image_dataset_from_directory(
+            data_dir,
+            validation_split=0.2, 
+            subset="validation",
+            shuffle=True,
+            batch_size=32,
+            image_size=(224, 224),
+            seed=42
+        )
+         # Spliting 448 files for testing.
+        """)
+        st.write("- `img_size = (224, 224)` sets the dimensions to which all input images will be resized before being fed into the model. This ensures that every image has the same dimensions, which is required for training a neural network.") 
     
-    data_dir = data_dir = os.path.join("assets", "Valorant", "weaponSkin")  
-    #st.write("Weapon Categories:", os.listdir(data_dir))
-    # Set up batch size and image size
-    batch_size = 32
-    img_size = (224, 224)  # Resize images
-
-    # Set a seed for reproducibility
-    seed = 123  # You can use any integer value here
-
-    # Load the training dataset (80% of the data, for example)
-    train_ds = image_dataset_from_directory(
+    data_dir = os.path.join("assets", "Valorant", "weaponSkin")
+    sample_data_resize = image_dataset_from_directory(
         data_dir,
-        validation_split=0.2,  # 20% data for validation
+        shuffle=False,
+        batch_size=1, 
+        image_size=(224, 224), 
+    )
+
+    for images, labels in sample_data_resize.take(1):  
+        sample_image = images[0]  
+        sample_label = labels[0].numpy()  
+        break  
+    
+    file_paths = sample_data_resize.file_paths
+    first_image_path = file_paths[0]
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    col1, col2, col3, col4 = st.columns([0.05, 0.5, 0.25, 0.05])
+    with col2:
+        st.write(" ")
+        st.write(" ")
+        st.write(" ")
+        st.write(" ")
+        st.image(first_image_path, caption="Original Image")
+    
+    with col3:
+        st.image(sample_image.numpy().astype("uint8")  , caption="Image after resize")
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Image Normalization (Rescaling)", divider="green")
+    col1, col2 = st.columns([0.5, 0.5])
+    with col1:
+        st.code(f"""
+        # Rescaling pixel
+        normalization_layer = tf.keras.layers.Rescaling(1./255)
+        train_data = train_data.map(lambda x, y: (normalization_layer(x), y))
+        test_data = test_data.map(lambda x, y: (normalization_layer(x), y))
+        """)
+            
+    with col2:
+        st.write("""
+        - tf.keras.layers.Rescaling(1./255) creates a layer that rescales the pixel values of images by dividing each pixel value by 255.
+        - This is because for most neural networks, it's common practice to normalize these values to a range between [0, 1]
+        """)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Convolutional Neural Network (CNN) Model Training ", divider="green")
+    
+    col1, col2 = st.columns([0.5, 0.5])
+    with col1:
+        st.code(f"""
+        model = models.Sequential([
+            layers.Conv2D(32, (3,3), activation='relu',
+                            input_shape=(224, 224, 3)),
+            layers.MaxPooling2D(2,2),
+
+            layers.Conv2D(64, (3,3), activation='relu'),
+            layers.MaxPooling2D(2,2),
+
+            layers.Conv2D(128, (3,3), activation='relu'),
+            layers.MaxPooling2D(2,2),
+
+            layers.Flatten(),
+            layers.Dense(128, activation='relu'),
+            layers.Dense(19, activation='softmax')
+        ])
+        """)
+            
+    with col2:
+        st.subheader("1. Conv2D (Convolutional Layers)")
+        st.code("layers.Conv2D('filters', 'kernel_size', 'activation', 'input_shape')")
+        st.write("""
+        - `filters` : Number of filters (or kernels) that will be applied to the input image for detecting a specific feature
+        - `kernel_size` : The size of the filter, in this case is 3x3 pixels. This means that the filter is a small 3x3 matrix that slides over the image.
+        - `activation` : The activation function is applied to the output of the convolution operation. ReLU (Rectified Linear Unit) is used here, which replaces all negative values with zero.
+        - `input_shape` : This specifies the input dimensions of the image that the model will receive. In this case, it’s a 224x224 image with 3 color channels (RGB).
+        """)
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    col1, col2 = st.columns([0.5, 0.5])
+    with col1:
+        st.subheader("2. MaxPooling2D (Max Pooling Layers)")
+        st.code("layers.MaxPooling2D(2, 2)")
+        st.write("""
+        - Performs max pooling, which is a downsampling operation used to reduce the spatial dimensions (width and height) of the input image or feature map.The 2x2 max pooling layer will select the maximum value from each 2x2 block.
+        """)
+        st.code("""
+        [ [1, 2, 3, 4],
+          [5, 6, 7, 8],          to          [[6,  8],
+          [9, 10, 11, 12],                    [14, 16]]
+          [13, 14, 15, 16]]
+        """)
+        st.markdown('<br>', unsafe_allow_html=True)
+        st.subheader("3. Flatten Layer")
+        st.code("layers.Flatten()")
+        st.write("""
+        - Converts the 2D feature maps (resulting from the convolution and pooling layers) into a 1D vector, making it ready for the Fully Connected Layers (ANN).
+        """)
+    
+    with col2:
+        st.subheader("4. Dense Layers (Fully Connected Layers)")
+        st.code("layers.Dense(128, activation='relu')")
+        st.write("- This layer have 128 neuron. Each unit (or neuron) will take all the values (features) from the previous layer and apply weights to them. It will then pass the weighted sum through an activation function (`ReLu`) to output a value.")
+        st.markdown('<br>', unsafe_allow_html=True)
+        st.code("layers.Dense(19, activation='softmax')")
+        st.write("""
+        - This is the output layer of the model. Its job is to provide the final prediction, which is typically a class label in classification tasks."
+        - The `softmax` activation function is used in the output layer of a neural network for multi-class classification. It transforms the raw output values (logits) into probabilities, where each value is in the range (0, 1), and the sum of all the probabilities equals 1. The class with the highest probability (i.e., the largest output value) is chosen as the predicted class.
+        """)
+        st.code("model.compile(optimizer=Adam(learning_rate=0.0005), loss='sparse_categorical_crossentropy', metrics=['accuracy'])")
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.header("Train the model and Evaluate test data", divider="green")
+    col1, col2 = st.columns([0.4, 0.6])
+    with col1:
+        st.code("""
+        # Early Stopping to prevent Overfitting
+        early_stopping = tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss', 
+            patience=3,  
+            restore_best_weights=True
+        )
+
+        history = model.fit(
+            train_ds,
+            epochs=10,
+            validation_data=test_ds,
+            batch_size=32,
+            callbacks=[early_stopping] 
+        )
+        """)
+    
+    with col2:
+        image_folder = 'assets/Valorant'
+        st.image(os.path.join(image_folder, "modelTraining", "epoch.png"))
+        st.code("""
+        test_loss, test_acc = model.evaluate(test_ds)
+        """)
+        st.image(os.path.join(image_folder, "modelTraining", "evaluate.png"))
+
+elif page == "Neural Network Demo":
+    st.markdown('<div class="h1">Valorant Weapons Skin Recognition</div>', unsafe_allow_html=True)
+    
+    data_dir = os.path.join("assets", "Valorant", "weaponSkin")  
+
+    # Load the training dataset (80% of the data)
+    train_data = image_dataset_from_directory(
+        data_dir,
+        validation_split=0.2, 
         subset="training",
         shuffle=True,
-        batch_size=batch_size,
-        image_size=img_size,
-        seed=seed  # Provide the seed value here
+        batch_size=32,
+        image_size=(224, 224) ,
+        seed=42 
     )
 
-    # Load the validation dataset (20% of the data, for example)
-    test_ds = image_dataset_from_directory(
+    # Load the test dataset (20% of the data)
+    test_data = image_dataset_from_directory(
         data_dir,
-        validation_split=0.2,  # 20% data for validation
+        validation_split=0.2, 
         subset="validation",
         shuffle=True,
-        batch_size=batch_size,
-        image_size=img_size,
-        seed=seed  # Provide the seed value here
+        batch_size=32,
+        image_size=(224, 224),
+        seed=42
     )
 
-    # Check class names (weapon types)
-    class_names = train_ds.class_names
-    st.write("Classes:", class_names)
-        
+    normalization_layer = tf.keras.layers.Rescaling(1./255)
+    train_data = train_data.map(lambda x, y: (normalization_layer(x), y))
+    test_data = test_data.map(lambda x, y: (normalization_layer(x), y))
+
+    model = models.Sequential([
+        layers.Conv2D(32, (3,3), activation='relu', input_shape=(224, 224, 3)),
+        layers.MaxPooling2D(2,2),
+
+        layers.Conv2D(64, (3,3), activation='relu'),
+        layers.MaxPooling2D(2,2),
+
+        layers.Conv2D(128, (3,3), activation='relu'),
+        layers.MaxPooling2D(2,2),
+
+        layers.Flatten(),
+        layers.Dense(128, activation='relu'),
+        layers.Dense(19, activation='softmax')
+    ])
+
+    model.compile(optimizer=Adam(learning_rate=0.0005), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
