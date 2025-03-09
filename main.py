@@ -21,6 +21,8 @@ from PIL import Image
 import gdown
 import shutil
 import time
+import zipfile
+import io
 
 st.markdown(
     """
@@ -1000,12 +1002,26 @@ elif page == "Neural Network Demo":
         
         return predicted_category
 
-    small_file_id = "1rnzG8dRue4NdVTU9U_DqcgrD1jZ1LBAa"
-    large_file_id = "1M3FRsLCv-TRlJ94rtVe1d2KzTbKZgmJk"
-
     def download_from_drive(file_id, output_name):
         if not os.path.exists(output_name): 
             gdown.download(f"https://drive.google.com/uc?id={file_id}", output_name, quiet=False)
+
+    # Function to create a zip file in memory
+    def create_zip_in_memory(base_output_folder):
+        # Create a zip file in memory
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # Walk through the folder and add files to the zip archive
+            for foldername, subfolders, filenames in os.walk(base_output_folder):
+                for filename in filenames:
+                    file_path = os.path.join(foldername, filename)
+                    zip_file.write(file_path, os.path.relpath(file_path, base_output_folder))
+        
+        zip_buffer.seek(0)  # Rewind the buffer to the beginning for downloading
+        return zip_buffer
+
+    small_file_id = "1rnzG8dRue4NdVTU9U_DqcgrD1jZ1LBAa"
+    large_file_id = "1M3FRsLCv-TRlJ94rtVe1d2KzTbKZgmJk"
 
     small_example = "smallDataset.zip"
     large_example = "largeDataset.zip"
@@ -1022,7 +1038,7 @@ elif page == "Neural Network Demo":
             st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
 
     # File uploader to upload multiple images
-    uploaded_files = st.file_uploader("Download `.zip` file and browse all Weapon Skin Images in `/forUserDownload/allWeapon` the model will classify and insert each weapons skin into 19 weapons type folders", accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload Weapon Skin Images", accept_multiple_files=True)
 
     if uploaded_files:
         start_time = time.time()  # Start timing
@@ -1039,13 +1055,15 @@ elif page == "Neural Network Demo":
                 f.write(uploaded_file.getbuffer())
 
             # Classify and move the image
-            predicted_category = classify_and_move_image(file_path)  
+            classify_and_move_image(file_path)  
 
-        # Create a ZIP file after classification
-        zip_file_path = "organized_weapon_skins.zip"
-        shutil.make_archive("organized_weapon_skins", 'zip', base_output_folder)
+        # Create a ZIP file in memory
+        zip_file_buffer = create_zip_in_memory(base_output_folder)
 
         # Print time taken
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
         st.write(f"Successfully organized and zipped files in {elapsed_time} seconds.")
+
+        # Provide a download button for the user to download the zip file
+        st.download_button("Download Organized Weapon Skins", zip_file_buffer, file_name="organized_weapon_skins.zip", mime="application/zip")
