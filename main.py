@@ -1042,6 +1042,12 @@ elif page == "Neural Network Demo":
     uploaded_files = st.file_uploader("Upload Weapon Skin Images", accept_multiple_files=True)
 
     if uploaded_files:
+
+        if os.path.exists(base_output_folder):
+            shutil.rmtree(base_output_folder)
+            
+        os.makedirs(all_weapon_folder, exist_ok=True)
+    
         start_time = time.time()
         st.write(f"Processing uploaded images... This may take a few minutes.")
 
