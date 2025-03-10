@@ -1029,6 +1029,7 @@ elif page == "Neural Network Demo":
             st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
 
     uploaded_files = st.file_uploader("Extract file and browse into `/forUserDownload/allWeapon` to upload Weapon Skin images", accept_multiple_files=True)
+    #st.write(uploaded_files)
 
     if uploaded_files:
         start_time = time.time() 
