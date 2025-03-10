@@ -1023,10 +1023,10 @@ elif page == "Neural Network Demo":
         with open(small_example, "rb") as f:
             st.download_button("Download Small Dataset (145 Images) `recommended`", f, file_name="smallDataset.zip", mime="application/zip")
 
-    with col2:
-        download_from_drive(large_file_id, large_example)
-        with open(large_example, "rb") as f:
-            st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
+    #with col2:
+    #    download_from_drive(large_file_id, large_example)
+    #    with open(large_example, "rb") as f:
+    #        st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
 
     uploaded_files = st.file_uploader("Extract file and browse into `/forUserDownload/allWeapon` to upload Weapon Skin images", accept_multiple_files=True)
     #st.write(uploaded_files)
