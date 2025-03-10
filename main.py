@@ -974,6 +974,9 @@ elif page == "Neural Network Demo":
     except Exception as e:
         print(e)
     
+    with row7col2:
+        st.warning("⚠️ Please do not spam the 'Random Weapon Skins' button. Excessive requests may cause delays or errors.")
+    
 
     st.header("Classify and Organize Weapon Skins!", divider="green")
 
