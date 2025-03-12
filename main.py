@@ -1039,7 +1039,7 @@ elif page == "Neural Network Demo":
         with open(large_example, "rb") as f:
             st.download_button("Download Large Dataset (2240 Images)", f, file_name="largeDataset.zip", mime="application/zip")
 
-    uploaded_files = st.file_uploader("Upload Weapon Skin Images", accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Extract the downloaded file and browse into `/forUserDownload/allWeapon` then upload Weapon Skin Images", accept_multiple_files=True)
 
     if uploaded_files:
 
