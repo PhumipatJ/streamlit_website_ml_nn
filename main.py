@@ -99,8 +99,8 @@ if page == "Machine Learning Detail":
 
     with col2:
         image_folder = 'assets/LoL'
-        sample_image_path = os.path.join(image_folder, 'logo', f"LoL.webp")
-        st.image(sample_image_path)
+        sample_image_path = os.path.join(image_folder, 'logo', f"LoL.webp", )
+        st.image(sample_image_path,caption = "Image source: [fictionalcrossover](https://fictionalcrossover.fandom.com/wiki/League_of_Legends?file=A_league.png)",width=400)
 
     st.markdown('<br>', unsafe_allow_html=True)
     st.subheader("How does Machine Learning help in classifying LoL Champions Role ?")
@@ -569,7 +569,7 @@ elif page == "Neural Network Detail":
     st.markdown('<br>', unsafe_allow_html=True)
     st.header("Neural Network for Valorant Weapon Skin Recognition using CNN", divider="green")
 
-    col1, col2 = st.columns([0.5, 0.5])
+    col1, col2 = st.columns([0.55, 0.45])
 
     with col1:
         st.subheader("What is Valorant ?")
@@ -581,7 +581,7 @@ elif page == "Neural Network Detail":
     with col2:
         image_folder = 'assets/Valorant'
         sample_image_path = os.path.join(image_folder, 'valorant', "valorant.webp")
-        st.image(sample_image_path)
+        st.image(sample_image_path,caption = "Image source: [valorant.fandom.com](https://valorant.fandom.com/wiki/VALORANT?file=Valorant_Cover_Art.jpg)",width=550)
     
     st.markdown('<br>', unsafe_allow_html=True)
 
@@ -1066,3 +1066,23 @@ elif page == "Neural Network Demo":
         st.write(f"Successfully organized and zipped files in {elapsed_time} seconds.")
 
         st.download_button("Download Organized Weapon Skins", zip_file_buffer, file_name="organized_weapon_skins.zip", mime="application/zip")
+
+footer = """
+<style>
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #1A1F2B;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #f1f1f1;
+    }
+</style>
+<div class="footer">
+    Some content on this website was generated with AI assistance, including ChatGPT, DeepSeek, and Gemini.
+</div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
