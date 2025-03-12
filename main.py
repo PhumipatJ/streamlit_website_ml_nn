@@ -542,12 +542,15 @@ elif page == "Machine Learning Demo":
                     "Attack_Speed": attack_speed
                 }])    
 
+                sample_features_guess_scaled = pd.DataFrame(scaler.transform(sample_features_guess), columns=sample_features_guess.columns)
+                st.write(sample_features_guess_scaled)
+
                 if model_option == 'KNN':
-                    predicted_label = knn.predict(sample_features_guess)
+                    predicted_label = knn.predict(sample_features_guess_scaled)
                 elif model_option == 'SVM':
-                    predicted_label = svm.predict(sample_features_guess)
+                    predicted_label = svm.predict(sample_features_guess_scaled)
                 else:
-                    predicted_label = ensemble_model.predict(sample_features_guess)
+                    predicted_label = ensemble_model.predict(sample_features_guess_scaled)
 
                 category_map = ['Support', 'Tank', 'Marksman', 'Assassin', 'Mage', 'Fighter']
                 try:
