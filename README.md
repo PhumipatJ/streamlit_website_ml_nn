@@ -1,47 +1,47 @@
-Intelligent System (040613701) - KMUTNB
+# Intelligent System (040613701) - KMUTNB
 
-This project is part of the Intelligent System (040613701) course at King Mongkut's University of Technology North Bangkok (KMUTNB).
+This project is part of the **Intelligent System (040613701)** course at **King Mongkut's University of Technology North Bangkok (KMUTNB)**.
 
-Project Overview
+## Project Overview
 
 This repository contains code and datasets for two projects:
 
-Machine Learning Model
+1. **Machine Learning Model**
+2. **Neural Network Model**
 
-Neural Network Model
+The web application for this project is accessible at: [Project Website](https://phumipatj.streamlit.app/)
 
-The web application for this project is accessible at: Project Website
-
-Datasets
+## Datasets
 
 Datasets for both projects are provided in this repository and can also be accessed via Google Drive.
 
-Machine Learning Dataset
+### Machine Learning Dataset
 
-File location: int/champions.csv
+- File location: `int/champions.csv`
+- Google Drive: [Download Dataset](https://drive.google.com/file/d/1YQ6zoTeQBOjvYrakaXAQqXyja2HtPszD/view?usp=sharing)
 
-Google Drive: Download Dataset
+### Neural Network Dataset
 
-Neural Network Dataset
+- File location: `assets/Valorant/weaponSkin/...`
+- Google Drive: [Download Dataset](https://drive.google.com/drive/folders/130-iFl3WiHGApQa0wXFi-tPIRHXZw5uT?usp=sharing)
 
-File location: assets/Valorant/weaponSkin/...
-
-Google Drive: Download Dataset
-
-Training Code
+## Training Code
 
 The training scripts for both projects are available on Google Colab:
 
-Machine Learning Model
+### Machine Learning Model
 
-Google Colab: Train Machine Learning Model
+- Google Colab: [Train Machine Learning Model](https://colab.research.google.com/drive/1qtR5r7rZVSA3i15ZRCVekof5JMH7vJ8J?usp=sharing)
 
-Neural Network Model
+### Neural Network Model
 
-Google Colab: Train Neural Network Model
+- Google Colab: [Train Neural Network Model](https://colab.research.google.com/drive/1uyCKwIb1jiZCUIcgWxS5uw4U37bE1fA2?usp=sharing)
 
-Web Application Code
+## Web Application Code
 
 The web application is developed using Python and is stored in:
 
-Main file: /main.py
+- **Main file:** `/main.py`
+
+For any questions or issues, feel free to open an issue in this repository!
+
