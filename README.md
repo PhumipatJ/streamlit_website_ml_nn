@@ -8,8 +8,8 @@ This repository contains code and datasets for two projects:
 
 1. **Machine Learning Model**
 2. **Neural Network Model**
-
-The web application for this project is accessible at: [Project Website](https://phumipatj.streamlit.app/)
+ 
+The web application for this project is accessible at: [https://phumipatj.streamlit.app/](https://phumipatj.streamlit.app/) 
 
 ## Datasets
 
@@ -17,7 +17,7 @@ Datasets for both projects are provided in this repository and can also be acces
 
 ### Machine Learning Dataset
 
-- File location: `int/champions.csv`
+- File location: `/champions.csv`
 - Google Drive: [Download Dataset](https://drive.google.com/file/d/1YQ6zoTeQBOjvYrakaXAQqXyja2HtPszD/view?usp=sharing)
 
 ### Neural Network Dataset
