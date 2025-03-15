@@ -45,5 +45,4 @@ The web application is developed using Python and is stored in:
 
 - **Main file:** `/main.py`
 
-For any questions or issues, feel free to open an issue in this repository!
 
