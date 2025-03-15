@@ -1,3 +1,5 @@
+**Note:** If you can't find the topic you're looking for in this repository, please refer to this README for details.
+
 # Intelligent System (040613701) - KMUTNB
 
 This project is part of the **Intelligent System (040613701)** course at **King Mongkut's University of Technology North Bangkok (KMUTNB)**.
