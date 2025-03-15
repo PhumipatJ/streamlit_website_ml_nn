@@ -29,14 +29,16 @@ Datasets for both projects are provided in this repository and can also be acces
 
 ## Training Code
 
-The training scripts for both projects are available on Google Colab:
+The training scripts for both projects are provided in this repository and are available on Google Colab:
 
 ### Machine Learning Model
 
+- File location: `/ML_Train_Code/ml_lol_champions.py` or `/ML_Train_Code/ML_LoL_Champions.ipynb`
 - Google Colab: [Train Machine Learning Model](https://colab.research.google.com/drive/1qtR5r7rZVSA3i15ZRCVekof5JMH7vJ8J?usp=sharing)
 
 ### Neural Network Model
 
+- File location: `/NN_Train_Code/cnn_valorant_skins.py` or `/NN_Train_Code/CNN_Valorant_Skins.ipynb`
 - Google Colab: [Train Neural Network Model](https://colab.research.google.com/drive/1uyCKwIb1jiZCUIcgWxS5uw4U37bE1fA2?usp=sharing)
 
 ## Web Application Code
